@@ -1,0 +1,225 @@
+﻿@page "/Lia"
+@using DavidAlmkvistUppg3.Shared
+
+<PageTitle>Din Lia Plattform</PageTitle>
+
+@*<h3>Lista med Företag för Lia</h3>*@
+
+@*<EditForm Model="CurrentCompany" OnSubmit="AddCompany">
+	<InputText @bind-Value="CurrentCompany.CompanyName"></InputText>
+	<InputCheckbox @bind-Value="CurrentCompany.Applied"></InputCheckbox>
+	<InputTextArea @bind-Value="CurrentCompany.Comment"></InputTextArea>
+	<button class="btn btn-dark">Add</button>
+</EditForm>*@
+
+<div class="container-fluid">
+	<div class="row">
+
+		<div class="col-4">
+			<EditForm Model="CurrentCompany" OnSubmit="AddCompany">
+				<h3>Lägg Till Företag för Lia</h3>
+				<hr  />
+
+				<div class="form-group row">
+					<label for="company" class="col-sm-1 col-form-label">Företagsnamn</label>
+					<div >
+						<InputText id="company" class="form-control" placeholder="Företagets Namn" @bind-Value="CurrentCompany.CompanyName" />
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="company" class="col-sm-1 col-form-label">Stad</label>
+					<div>
+						<InputText id="company" class="form-control" placeholder="Stad" @bind-Value="CurrentCompany.Location" />
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="company" class="col-sm-1 col-form-label">Beskrivning:</label>
+					<div >
+						<InputTextArea id="company" class="form-control" placeholder="Beskrivning om företaget  " @bind-Value="CurrentCompany.Description" />
+					</div>
+				</div>
+				
+				<hr/>
+
+				@*<div class="form-group row">
+					<label for="applied" class="col-sm-1 col-form-label">Ansökt <InputCheckbox @bind-Value="CurrentCompany.Applied"></InputCheckbox><InputDate @bind-Value="_date"></InputDate></label>
+
+				</div>*@
+				
+				<div class="form-group row">
+				<AuthorizeView Context="userContext">
+					<Authorized>
+						<p>Inloggad</p>
+						<div class="form-group row">
+							<label for="company" class="col-sm-1 col-form-label">Kommentar:</label>
+							<div>
+								<InputTextArea id="company" class="form-control" placeholder="Egna kommentar   " @bind-Value="CurrentCompany.Comment" />
+							</div>
+						</div>
+						<div class="col-2">
+							<label for="applied" class="col-sm-1 col-form-label">Ansökt </label>
+						</div>
+						<div class="col-1 mt-1">
+							<InputCheckbox @bind-Value="CurrentCompany.Applied"></InputCheckbox>
+						</div>
+						<div class="col-4 mt-1">
+							<InputDate @bind-Value="_date"></InputDate>
+						</div>
+					</Authorized>
+					<NotAuthorized>
+						<p>Logga in din mupp</p>
+					</NotAuthorized>
+				</AuthorizeView>
+
+					<div class="col-5 mt-2 " >
+						<button class="btn btn-dark"> Lägg till </button>
+					</div>
+				</div>
+
+				@*<div class="form-group row">
+					<label for="company" class="col-sm-1 col-form-label"></label>
+					<div >
+						<button class="btn btn-dark">Add</button>
+					</div>
+				</div>*@
+			</EditForm>
+		</div>
+
+		<div class="col-6">
+			
+			<h3>Företag av Intresse </h3>
+			<hr  />
+
+			<Virtualize Items="Companies" Context="company">
+				
+				<div class="card border border-primary">
+					<div class="card-header">
+						<strong>@company.CompanyName</strong>
+						
+					</div>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item"><strong>Plats:</strong> @GetLocation(company.Location)
+							<strong>Beskrivning:</strong> @company.Description
+						</li>
+						<li class="list-group-item"><strong>Ansökt</strong> @GetStatus(company.Applied)</li>
+						<li class="list-group-item"><strong>Kommentar:</strong> @company.Comment</li>
+					</ul>
+				</div>
+				
+
+			</Virtualize>
+			
+			<AuthorizeView>
+				<Authorized>
+					<p>Inloggad</p>
+				</Authorized>
+				<NotAuthorized>
+					<p>Logga in din mupp</p>
+				</NotAuthorized>
+			</AuthorizeView>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+@code {
+
+	DateTime _date = DateTime.Today;
+
+	Company CurrentCompany { get; set; } = new("", false, "", "", "");
+	List<Company> Companies { get; set; } = new();
+
+	private void AddCompany()
+	{
+		if (!string.IsNullOrWhiteSpace(CurrentCompany.CompanyName))
+		{
+			Companies.Add(CurrentCompany);
+		}
+		CurrentCompany = new Company("", false, "", "","");
+	}
+
+	private string GetStatus(bool status)
+	{
+		string text = "";
+		if (status)
+		{
+			text = "Sökt!";
+		}
+		else
+		{
+			text = "Inte Sökt än!";
+		}
+		return text;
+	}
+
+	private string GetLocation(string location)
+	{
+		// someValue = condition ? newValue : someOtherValue;
+		return string.IsNullOrWhiteSpace(location) ? "Okänd" : location;
+		//if (location == "")
+		//{
+		//	return "Okänd";
+		//}
+		//return location;
+	}
+}
+
+
+@*
+
+<div class="container-fluid">
+	<div class="row">
+
+		<div class="col-4">
+			<EditForm Model="CurrentCompany" OnSubmit="AddCompany">
+				<h3>Lägg Till Företag för Lia</h3>
+				<hr class="col-sm-3" />
+
+				<div class="form-group row">
+					<label for="company" class="col-sm-1 col-form-label">Företagsnamn</label>
+					<div class="col-sm-2">
+						<InputText id="company" class="form-control" placeholder="Företagets Namn" @bind-Value="CurrentCompany.CompanyName" />
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="applied" class="col-sm-1 col-form-label">Ansökt <InputCheckbox @bind-Value="CurrentCompany.Applied"></InputCheckbox></label>
+				</div>
+
+				<div class="form-group row">
+					<label for="company" class="col-sm-1 col-form-label">Kommentar:</label>
+					<div class="col-sm-2">
+						<InputTextArea id="company" class="form-control" placeholder="Kommentar om företaget  " @bind-Value="CurrentCompany.Comment" />
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="company" class="col-sm-1 col-form-label"></label>
+					<div class="col-sm-2">
+						<button class="btn btn-dark">Add</button>
+					</div>
+				</div>
+			</EditForm>
+		</div>
+
+		<div class="col-6">
+
+			<Virtualize Items="Companies" Context="company">
+				<ul>
+					<li>@company.CompanyName  @GetStatus(company.Applied)</li>
+				</ul>
+			</Virtualize>
+
+		</div>
+	</div>
+</div>*@
