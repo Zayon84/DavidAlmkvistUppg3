@@ -1,4 +1,5 @@
 using DavidAlmkvistUppg3.Server.DataAccess;
+using DavidAlmkvistUppg3.Shared;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<CompanyContext>(options =>
 	var connectionString = builder.Configuration.GetConnectionString("CompanyDb");
 	options.UseSqlServer(connectionString);
 });
+
+builder.Services.AddScoped<CompanyRepository>();
 
 var app = builder.Build();
 
@@ -37,5 +40,16 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapFallbackToFile("index.html");
+
+app.MapGet("/all", (CompanyRepository repo) =>
+{
+	return Results.Ok(repo.GetAll());
+});
+
+app.MapPost("/add", (CompanyRepository repo, Company company) =>
+{
+	repo.Add(company);
+	return Results.Ok("Company Added.");
+});
 
 app.Run();
