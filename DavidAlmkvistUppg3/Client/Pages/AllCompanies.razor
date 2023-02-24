@@ -1,6 +1,31 @@
 ﻿@page "/AllCompanies"
 
+@inject HttpClient _client;
+
+
 <h1 class="d-flex justify-content-center">Alla Företag</h1>
+
+
+@*<Virtualize Items="Companies" Context="company">
+
+				<div class="card border border-primary">
+					<div class="card-header">
+						<strong>@company.CompanyName</strong>
+
+				</div>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item"><strong>Plats:</strong> @GetLocation(company.Location)
+							<strong>Beskrivning:</strong> @company.Description
+						</li>
+						<li class="list-group-item"><strong>Ansökt</strong> @GetStatus(company.Applied)</li>
+						<li class="list-group-item"><strong>Kommentar:</strong> @company.Comment</li>
+					</ul>
+				</div>
+
+
+</Virtualize>*@
+
+
 
 
 @code {

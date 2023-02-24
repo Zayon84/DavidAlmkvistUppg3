@@ -1,16 +1,9 @@
 ﻿@page "/Lia"
 @using DavidAlmkvistUppg3.Shared
 
+@inject HttpClient _client;
+
 <PageTitle>Din Lia Plattform</PageTitle>
-
-@*<h3>Lista med Företag för Lia</h3>*@
-
-@*<EditForm Model="CurrentCompany" OnSubmit="AddCompany">
-	<InputText @bind-Value="CurrentCompany.CompanyName"></InputText>
-	<InputCheckbox @bind-Value="CurrentCompany.Applied"></InputCheckbox>
-	<InputTextArea @bind-Value="CurrentCompany.Comment"></InputTextArea>
-	<button class="btn btn-dark">Add</button>
-</EditForm>*@
 
 <div class="container-fluid">
 	<div class="row">
@@ -139,13 +132,19 @@
 	Company CurrentCompany { get; set; } = new("", "", "", false, "");
 	List<Company> Companies { get; set; } = new();
 
-	private void AddCompany()
+	private async void AddCompany()
 	{
+		
+
 		if (!string.IsNullOrWhiteSpace(CurrentCompany.CompanyName))
 		{
-			Companies.Add(CurrentCompany);
+			await _client.PostAsJsonAsync<Company>("add", CurrentCompany);
+			var respons = await _client.GetFromJsonAsync<IEnumerable<Company>>("all");
+
+			CurrentCompany = new Company("", "", "", false, "");
+
+			Companies = respons.ToList();
 		}
-		CurrentCompany = new Company("", "", "", false, "");
 	}
 
 	private string GetStatus(bool status)
@@ -164,7 +163,6 @@
 
 	private string GetLocation(string location)
 	{
-		// someValue = condition ? newValue : someOtherValue;
 		return string.IsNullOrWhiteSpace(location) ? "Okänd" : location;
 		//if (location == "")
 		//{
@@ -173,53 +171,3 @@
 		//return location;
 	}
 }
-
-
-@*
-
-<div class="container-fluid">
-	<div class="row">
-
-		<div class="col-4">
-			<EditForm Model="CurrentCompany" OnSubmit="AddCompany">
-				<h3>Lägg Till Företag för Lia</h3>
-				<hr class="col-sm-3" />
-
-				<div class="form-group row">
-					<label for="company" class="col-sm-1 col-form-label">Företagsnamn</label>
-					<div class="col-sm-2">
-						<InputText id="company" class="form-control" placeholder="Företagets Namn" @bind-Value="CurrentCompany.CompanyName" />
-					</div>
-				</div>
-
-				<div class="form-group row">
-					<label for="applied" class="col-sm-1 col-form-label">Ansökt <InputCheckbox @bind-Value="CurrentCompany.Applied"></InputCheckbox></label>
-				</div>
-
-				<div class="form-group row">
-					<label for="company" class="col-sm-1 col-form-label">Kommentar:</label>
-					<div class="col-sm-2">
-						<InputTextArea id="company" class="form-control" placeholder="Kommentar om företaget  " @bind-Value="CurrentCompany.Comment" />
-					</div>
-				</div>
-
-				<div class="form-group row">
-					<label for="company" class="col-sm-1 col-form-label"></label>
-					<div class="col-sm-2">
-						<button class="btn btn-dark">Add</button>
-					</div>
-				</div>
-			</EditForm>
-		</div>
-
-		<div class="col-6">
-
-			<Virtualize Items="Companies" Context="company">
-				<ul>
-					<li>@company.CompanyName  @GetStatus(company.Applied)</li>
-				</ul>
-			</Virtualize>
-
-		</div>
-	</div>
-</div>*@
