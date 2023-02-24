@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<CompanyContext>(options => 
 {
-	var connectionString = builder.Configuration.GetConnectionString("CompanyDb");
+	var connectionString = builder.Configuration.GetConnectionString("CompanyDb1");
 	options.UseSqlServer(connectionString);
 });
 
