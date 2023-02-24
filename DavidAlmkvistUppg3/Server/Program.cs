@@ -1,10 +1,17 @@
+using DavidAlmkvistUppg3.Server.DataAccess;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<CompanyContext>(options => 
+{
+	var connectionString = builder.Configuration.GetConnectionString("CompanyDb");
+	options.UseSqlServer(connectionString);
+});
 
 var app = builder.Build();
 
