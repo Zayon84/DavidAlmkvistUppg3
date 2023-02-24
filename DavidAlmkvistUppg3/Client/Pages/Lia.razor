@@ -127,24 +127,38 @@
 
 @code {
 
+	protected override async Task OnInitializedAsync()
+	{
+		await GetCompanyList();
+	}
+
 	DateTime _date = DateTime.Today;
 
 	Company CurrentCompany { get; set; } = new("", "", "", false, "");
 	List<Company> Companies { get; set; } = new();
 
+	private async Task GetCompanyList()
+	{
+
+		var respons = (await _client.GetFromJsonAsync<IEnumerable<Company>>("all"));
+		Companies = respons.ToList();
+		StateHasChanged();
+	}
+
 	private async void AddCompany()
 	{
 		
 
-		if (!string.IsNullOrWhiteSpace(CurrentCompany.CompanyName))
+		if(!string.IsNullOrWhiteSpace(CurrentCompany.CompanyName))
 		{
 			await _client.PostAsJsonAsync<Company>("add", CurrentCompany);
 			var respons = await _client.GetFromJsonAsync<IEnumerable<Company>>("all");
 
-			CurrentCompany = new Company("", "", "", false, "");
-
 			Companies = respons.ToList();
 		}
+
+		CurrentCompany = new Company("", "", "", false, "");
+		StateHasChanged();
 	}
 
 	private string GetStatus(bool status)

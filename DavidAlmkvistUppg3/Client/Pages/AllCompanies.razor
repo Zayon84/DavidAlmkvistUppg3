@@ -1,4 +1,5 @@
 ﻿@page "/AllCompanies"
+@using DavidAlmkvistUppg3.Shared
 
 @inject HttpClient _client;
 
@@ -6,28 +7,50 @@
 <h1 class="d-flex justify-content-center">Alla Företag</h1>
 
 
-@*<Virtualize Items="Companies" Context="company">
 
-				<div class="card border border-primary">
-					<div class="card-header">
-						<strong>@company.CompanyName</strong>
+@if (isLoading)
+{
+	<div class="d-flex justify-content-center">
+		<div class="spinner-border "></div>
+	</div>
+}
+else
+{
+<Virtualize Items="Companies" Context="company">
+	
+	<div class="card">
+		<div class="card-header">
+			<strong >@company.CompanyName</strong>
+		</div>
 
-				</div>
-					<ul class="list-group list-group-flush">
-						<li class="list-group-item"><strong>Plats:</strong> @GetLocation(company.Location)
-							<strong>Beskrivning:</strong> @company.Description
-						</li>
-						<li class="list-group-item"><strong>Ansökt</strong> @GetStatus(company.Applied)</li>
-						<li class="list-group-item"><strong>Kommentar:</strong> @company.Comment</li>
-					</ul>
-				</div>
+		<div class="card-body">
+			<strong>Plats:</strong> @company.Location <strong>Beskrivning:</strong> @company.Description
+		</div>
+	</div>
 
+</Virtualize> 
 
-</Virtualize>*@
-
-
+}
 
 
 @code {
-	
+
+	bool isLoading = true;
+	protected override async Task OnInitializedAsync()
+	{
+		await AllComp();
+	}
+
+	List<Company> Companies { get; set; } = new();
+   
+	private async Task AllComp()
+	{
+		
+		var respons =( await _client.GetFromJsonAsync<IEnumerable<Company>>("all"));
+		Companies = respons.ToList();
+		isLoading = false;
+		StateHasChanged();
+	}
+
+
 }
