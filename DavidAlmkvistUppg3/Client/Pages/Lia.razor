@@ -136,7 +136,7 @@
 
 	DateTime _date = DateTime.Today;
 
-	Company CurrentCompany { get; set; } = new("", false, "", "", "");
+	Company CurrentCompany { get; set; } = new("", "", "", false, "");
 	List<Company> Companies { get; set; } = new();
 
 	private void AddCompany()
@@ -145,7 +145,7 @@
 		{
 			Companies.Add(CurrentCompany);
 		}
-		CurrentCompany = new Company("", false, "", "","");
+		CurrentCompany = new Company("", "", "", false, "");
 	}
 
 	private string GetStatus(bool status)
